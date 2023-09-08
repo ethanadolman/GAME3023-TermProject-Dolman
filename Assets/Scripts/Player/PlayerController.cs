@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed; // The speed at which the player moves.
+    public LayerMask SolidObjectsLayer;
+    public LayerMask EncountersLayer;
+    public AudioSource wildEncounter;
 
     public bool isMoving; // Indicates whether the player is currently in motion.
 
@@ -18,7 +21,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!isMoving)
         {
@@ -38,8 +41,9 @@ public class PlayerController : MonoBehaviour
                 targetPos.x += input.x;
                 targetPos.y += input.y;
 
-                // Start the movement coroutine to move the player to the target position.
-                StartCoroutine(Move(targetPos));
+                //If the tile is walkable, start the movement coroutine to move the player to the target position.
+                if (IsWalkable(targetPos))
+                    StartCoroutine(Move(targetPos));
             }
         }
         animator.SetBool("isMoving", isMoving);
@@ -60,5 +64,29 @@ public class PlayerController : MonoBehaviour
         // Ensure the player reaches the exact target position and set isMoving back to false.
         transform.position = targetPos;
         isMoving = false; // The player is no longer moving.
+
+        CheckForEncounters();
+    }
+
+    private bool IsWalkable(Vector3 targetPos)
+    {
+        if (Physics2D.OverlapCircle(targetPos, 0.15f, SolidObjectsLayer) != null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void CheckForEncounters()
+    {
+        if (Physics2D.OverlapCircle(transform.position, 0.15f, EncountersLayer) != null)
+        {
+            if (Random.Range(1, 101) <= 10)
+            {
+                wildEncounter.Play(0);
+                print("Encountered Wild PokeGem");
+            };
+        }
     }
 }
