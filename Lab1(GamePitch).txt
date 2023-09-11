@@ -1,3 +1,6 @@
+GAME3023 Term Project.
+Ayden Heyink and Ethan Dolman
+
 Game Pitch:
 
 Basic idea:
@@ -12,7 +15,7 @@ Features:
 
 - A number of random enemy encounters.
 - Small amount of open world exploration.
-- Random chests with supplies, such as health.
+- Pickup supplies from enemies and random pickups, like health.
 
 How will this meet the requirements of the project?:
 
