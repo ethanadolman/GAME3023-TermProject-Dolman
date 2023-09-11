@@ -1,0 +1,25 @@
+Game Pitch:
+
+Basic idea:
+Our game will be a medieval themed, turn-based game with small horror and creepy elements. 
+
+Plot: 
+You are an amateur knight sent by the Queen as a last hope after the deadly, legendary, dragon named Rucketh destroyed the kingdom of Grendynal, ending the lives of many peasants and causing the rest to flee, leaving the princess Dynalla behind with dwindling supplies. The world of Brushens also holds many dangerous monsters, the fall of Grendynal left many of these monsters able to breach the walls of Grendynal and roam its streets. Rucketh is rumoured to be sleeping...
+
+You, Wyernith, are fighting for not only the reputation, but also the knowledge that, if you can save princess Dynalla, you and your family will bathe in riches forever, fulfilling your lifelong dream of sparing them from poverty. 
+
+Features: 
+
+- A number of random enemy encounters.
+- Small amount of open world exploration.
+- Random chests with supplies, such as health.
+
+How will this meet the requirements of the project?:
+
+The main way is with the enemy encounters with monsters that made their ways in the walls. You have the turn-based system with each encounter, they will be on varying difficulties, but none will be too long.
+
+The other way is the world, which will be linear, but with small different paths you can take, only 2 or 3 ways for each small section. Some paths will have no enemies, some will have many. Use basic common sense and look at the environment to sense where the most danger is.
+
+Any alterations?:
+
+No alterations, but would like to use some blood effects and pg-13 violence.
