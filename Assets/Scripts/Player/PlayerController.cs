@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,8 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed; // The speed at which the player moves.
     public LayerMask SolidObjectsLayer;
     public LayerMask EncountersLayer;
-    public AudioSource wildEncounter;
+
+    public event Action OnEncountered;
 
     public bool isMoving; // Indicates whether the player is currently in motion.
 
@@ -21,7 +23,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    public void HandleUpdate()
     {
         if (!isMoving)
         {
@@ -82,10 +84,10 @@ public class PlayerController : MonoBehaviour
     {
         if (Physics2D.OverlapCircle(transform.position, 0.15f, EncountersLayer) != null)
         {
-            if (Random.Range(1, 101) <= 10)
+            if (UnityEngine.Random.Range(1, 101) <= 10)
             {
-                wildEncounter.Play(0);
-                print("Encountered Wild PokeGem");
+                animator.SetBool("isMoving", isMoving);
+                OnEncountered();
             };
         }
     }
