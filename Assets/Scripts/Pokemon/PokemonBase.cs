@@ -112,3 +112,27 @@ public enum PokemonType
     Water,
     Grass
 }
+
+public class TypeChart
+{
+    private static float[][] chart =
+    {
+        //                   NOR FIR WAT GRA
+        /*NOR*/ new float[] {1f, 1f, 1f, 1f},
+        /*FIR*/ new float[] {1f,.5f,.5f, 2f},
+        /*WAT*/ new float[] {1f, 2f, .5f, 1f},
+        /*GRA*/ new float[] {1f,.5f, 2f, .5f}
+    };
+
+    public static float GetEffectiveness(PokemonType attackType, PokemonType defenseType)
+    {
+        if (attackType == PokemonType.None || defenseType == PokemonType.None)
+        return 1;
+
+        int row = (int)attackType - 1;
+        int col = (int)defenseType - 1;
+
+        return chart[row][col];
+    }
+}
+
