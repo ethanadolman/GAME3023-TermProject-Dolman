@@ -10,12 +10,14 @@ public class GameController : MonoBehaviour
     [SerializeField] private BattleSystem battleSystem;
     [SerializeField] private Camera worldCamera;
 
+    [SerializeField] private AudioClip freeroamMusic;
     GameState state;
 
     void Start()
     {
         playerController.OnEncountered += StartBattle;
         battleSystem.OnBattleOver += EndBattle;
+        AudioManager.i.PlayMusic(freeroamMusic);
     }
 
     void StartBattle()
@@ -33,6 +35,7 @@ public class GameController : MonoBehaviour
         state = GameState.FreeRoam;
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);
+        AudioManager.i.PlayMusic(freeroamMusic);
     }
 
     // Update is called once per frame

@@ -14,6 +14,15 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] private BattleHud enemyHud;
     [SerializeField] private BattleDialogBox dialogBox;
 
+    [SerializeField] private AudioClip wildBattleMusic;
+    [SerializeField] private AudioClip battleVictoryMusic;
+
+    [SerializeField] private AudioClip pokemonCrySfx;
+    [SerializeField] private AudioClip hitWeak;
+    [SerializeField] private AudioClip hitNormal;
+    [SerializeField] private AudioClip hitSuperEffective;
+    [SerializeField] private AudioClip pokemonLowHealth;
+
     public event Action<bool> OnBattleOver;   
 
     BattleState state;
@@ -32,9 +41,9 @@ public class BattleSystem : MonoBehaviour
         enemyHud.SetData(enemyUnit.Pokemon);
 
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
-
+        AudioManager.i.PlayMusic(wildBattleMusic);
         yield return StartCoroutine(dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared."));
-
+        AudioManager.i.PlaySfx(pokemonCrySfx);
         PlayerAction();
     }
 
@@ -64,15 +73,16 @@ public class BattleSystem : MonoBehaviour
 
         enemyUnit.PlayHitAnimation();
         var damageDetails = enemyUnit.Pokemon.TakeDamage(move, playerUnit.Pokemon);
-        yield return enemyHud.UpdateHP();
         yield return ShowDamageDetails(damageDetails);
+        yield return enemyHud.UpdateHP();
         if (damageDetails.Fainted)
         {
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} Fainted");
             enemyUnit.PlayFaintAnimation();
 
-            yield return new WaitForSeconds(2f);
-            OnBattleOver(true);
+            AudioManager.i.PlayMusic(battleVictoryMusic, false);
+            yield return new WaitForSeconds(5f);
+                OnBattleOver(true);
         }
         else
         {
@@ -92,8 +102,10 @@ public class BattleSystem : MonoBehaviour
 
         playerUnit.PlayHitAnimation();
         var damageDetails = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
-        yield return playerHud.UpdateHP();
         yield return ShowDamageDetails(damageDetails);
+        yield return playerHud.UpdateHP();
+        
+
         if (damageDetails.Fainted)
         {
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} Fainted");
@@ -104,6 +116,11 @@ public class BattleSystem : MonoBehaviour
         }
         else
         {
+            if (playerUnit.Pokemon.HP <= playerUnit.Pokemon.MaxHp * 0.10f)
+            {
+                AudioManager.i.ClearSfx();
+                AudioManager.i.PlaySfx(pokemonLowHealth, true);
+            }
             PlayerAction();
         }
     }
@@ -114,10 +131,20 @@ public class BattleSystem : MonoBehaviour
             yield return dialogBox.TypeDialog($"A critical hit!");
 
         if (damageDetails.TypeEffectiveness > 1f)
+        {
+            AudioManager.i.PlaySfx(hitSuperEffective);
             yield return dialogBox.TypeDialog($"It's super effective!");
+        }
         else if (damageDetails.TypeEffectiveness < 1f)
+        {
+            AudioManager.i.PlaySfx(hitWeak);
             yield return dialogBox.TypeDialog($"It's not very effective!");
-
+        }
+        else
+        {
+            AudioManager.i.PlaySfx(hitNormal);
+            yield return null;
+        }
     }
 
     public void HandleUpdate()

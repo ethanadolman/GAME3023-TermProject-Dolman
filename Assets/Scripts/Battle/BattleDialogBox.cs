@@ -29,10 +29,16 @@ public class BattleDialogBox : MonoBehaviour
         foreach (var letter in dialog.ToCharArray())
         {
             dialogText.text += letter;
-            yield return new WaitForSeconds(1f/lettersPerSecond);
+            if (!(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                yield return new WaitForSeconds(1f / lettersPerSecond);
+            else
+                yield return new WaitForSeconds(0.5f / lettersPerSecond);
         }
 
-        yield return new WaitForSeconds(1);
+        if (!(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+            yield return new WaitForSeconds(1);
+        else
+            yield return new WaitForSeconds(0.25f);
     }
 
     public void EnableDialogText(bool enabled)
