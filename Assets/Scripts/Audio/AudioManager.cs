@@ -42,7 +42,7 @@ public class AudioManager : MonoBehaviour
     {
         foreach (var channel in sfxPlayer)
         {
-            if (!channel.isPlaying)
+            if (channel.isPlaying)
             {
                 channel.Stop();
             }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
+using Random = UnityEngine.Random;
 
 public enum BattleState { Start, PlayerAction, PlayerMove, EnemyMove, Busy }
 
@@ -22,21 +23,30 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] private AudioClip hitNormal;
     [SerializeField] private AudioClip hitSuperEffective;
     [SerializeField] private AudioClip pokemonLowHealth;
+    [SerializeField] private AudioClip pokemonFaint;
+    [SerializeField] private AudioClip pokemonFlee;
 
     public event Action<bool> OnBattleOver;   
 
     BattleState state;
     private int currentAction;
     private int currentMove;
-    public void StartBattle()
+    private int fleeAttempts;
+
+    private PokemonParty playerParty;
+    private Pokemon wildPokemon;
+
+    public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
     {
+        this.playerParty = playerParty;
+        this.wildPokemon = wildPokemon;
         StartCoroutine(SetupBattle());
     }
 
     public IEnumerator SetupBattle()
     {
-        playerUnit.SetUp();
-        enemyUnit.SetUp();
+        playerUnit.SetUp(playerParty.GetHealthyPokemon());
+        enemyUnit.SetUp(wildPokemon);
         playerHud.SetData(playerUnit.Pokemon);
         enemyHud.SetData(enemyUnit.Pokemon);
 
@@ -44,6 +54,7 @@ public class BattleSystem : MonoBehaviour
         AudioManager.i.PlayMusic(wildBattleMusic);
         yield return StartCoroutine(dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared."));
         AudioManager.i.PlaySfx(pokemonCrySfx);
+        fleeAttempts = 0;
         PlayerAction();
     }
 
@@ -66,6 +77,7 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.Busy;
         var move = playerUnit.Pokemon.Moves[currentMove];
+        move.PP--;
         yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} used {move.Base.Name}");
 
         playerUnit.PlayAttackAnimation();
@@ -77,7 +89,9 @@ public class BattleSystem : MonoBehaviour
         yield return enemyHud.UpdateHP();
         if (damageDetails.Fainted)
         {
+              
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} Fainted");
+            AudioManager.i.PlaySfx(pokemonFaint);
             enemyUnit.PlayFaintAnimation();
 
             AudioManager.i.PlayMusic(battleVictoryMusic, false);
@@ -90,11 +104,32 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    IEnumerator PerformPlayerFlee()
+    {
+        state = BattleState.Busy;
+        fleeAttempts++;
+        int escapeOdds = ((playerUnit.Pokemon.Speed * 128) / enemyUnit.Pokemon.Speed) + (30 * fleeAttempts);
+        if (escapeOdds > Random.Range(0, 256))
+        {
+            AudioManager.i.PlaySfx(pokemonFlee);
+            yield return dialogBox.TypeDialog($"you got away!");
+            yield return new WaitForSeconds(0.25f);
+            OnBattleOver(false);
+        }
+        else
+        {
+            yield return dialogBox.TypeDialog($"you couldn't get away!");
+            StartCoroutine(EnemyMove());
+        }
+
+    }
+
     IEnumerator EnemyMove()
     {
         state = BattleState.EnemyMove;
 
         var move = enemyUnit.Pokemon.GetRandomMove();
+        move.PP--;
         yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} used {move.Base.Name}");
 
         enemyUnit.PlayAttackAnimation();
@@ -108,11 +143,29 @@ public class BattleSystem : MonoBehaviour
 
         if (damageDetails.Fainted)
         {
+            AudioManager.i.ClearSfx();
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} Fainted");
+            AudioManager.i.PlaySfx(pokemonFaint);
             playerUnit.PlayFaintAnimation();
 
             yield return new WaitForSeconds(2f);
-            OnBattleOver(false);
+
+            var nextPokemon = playerParty.GetHealthyPokemon();
+            if (nextPokemon != null)
+            {
+                playerUnit.SetUp(nextPokemon);
+                playerHud.SetData(nextPokemon);  
+
+                dialogBox.SetMoveNames(nextPokemon.Moves);
+                yield return StartCoroutine(dialogBox.TypeDialog($"Go {nextPokemon.Base.Name}!"));
+                AudioManager.i.PlaySfx(pokemonCrySfx);
+                fleeAttempts = 0;
+                PlayerAction();
+            }
+            else
+            {
+                OnBattleOver(false);
+            }
         }
         else
         {
@@ -184,6 +237,7 @@ public class BattleSystem : MonoBehaviour
             else if (currentAction == 1)
             {
                 //Run
+                StartCoroutine(PerformPlayerFlee());
             }
         }
     }

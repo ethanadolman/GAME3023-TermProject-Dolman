@@ -44,4 +44,19 @@ public class MoveBase : ScriptableObject
     {
         get { return pp; }
     }
+
+    public bool isSpecial
+    {
+        get
+        {
+            if (type is PokemonType.Normal or PokemonType.None)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
 }
