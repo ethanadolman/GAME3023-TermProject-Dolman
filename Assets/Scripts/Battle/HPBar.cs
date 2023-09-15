@@ -16,7 +16,18 @@ public class HPBar : MonoBehaviour
     public void SetHP(float hpNormalized)
     {
         health.transform.localScale = new Vector3(hpNormalized, 1f);
-        image.color = Color.green;
+        if (hpNormalized <= 0.2f)
+        {
+            health.GetComponent<Image>().color = Color.red;
+        }
+        else if (hpNormalized <= 0.5f)
+        {
+            health.GetComponent<Image>().color = Color.yellow;
+        }
+        else
+        {
+            health.GetComponent<Image>().color = Color.green;  
+        }
     }
     
 

@@ -36,7 +36,7 @@ public class BattleDialogBox : MonoBehaviour
         }
 
         if (!(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(1f);
         else
             yield return new WaitForSeconds(0.25f);
     }
