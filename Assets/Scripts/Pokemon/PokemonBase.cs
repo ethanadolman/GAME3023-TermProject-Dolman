@@ -113,6 +113,15 @@ public enum PokemonType
     Grass
 }
 
+public enum Stat
+{
+    Attack,
+    Defense,
+    SpAttack,
+    SpDefense,
+    Speed
+}
+
 public class TypeChart
 {
     private static float[][] chart =

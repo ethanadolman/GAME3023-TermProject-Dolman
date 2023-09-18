@@ -2257,6 +2257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerUnit: 1
+  hud: {fileID: 548055083}
 --- !u!4 &618644405 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1359557202795651346, guid: d9307dbb07b17324188f633301842026, type: 3}
@@ -20592,8 +20593,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerUnit: {fileID: 613008815}
   enemyUnit: {fileID: 1683379037}
-  playerHud: {fileID: 548055083}
-  enemyHud: {fileID: 2104933883}
   dialogBox: {fileID: 149465790}
   partyScreen: {fileID: 1182972310}
   wildBattleMusic: {fileID: 8300000, guid: 1a53a034da6166a458e6a2d3afabcc76, type: 3}
@@ -20605,6 +20604,8 @@ MonoBehaviour:
   pokemonLowHealth: {fileID: 8300000, guid: 8eb33765083a4d44593ffc2ca3cff95d, type: 3}
   pokemonFaint: {fileID: 8300000, guid: a3826ffd531c90246a38936d40647f67, type: 3}
   pokemonFlee: {fileID: 8300000, guid: d7478a96e4951d845b633c440a8d562e, type: 3}
+  statDown: {fileID: 0}
+  statUp: {fileID: 0}
 --- !u!1 &1340060466
 GameObject:
   m_ObjectHideFlags: 0
@@ -36494,6 +36495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerUnit: 0
+  hud: {fileID: 2104933883}
 --- !u!114 &1683379038
 MonoBehaviour:
   m_ObjectHideFlags: 0
