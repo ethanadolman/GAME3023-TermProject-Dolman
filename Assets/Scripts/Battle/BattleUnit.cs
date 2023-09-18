@@ -9,11 +9,13 @@ public class BattleUnit : MonoBehaviour
     [SerializeField] private bool isPlayerUnit;
     [SerializeField] BattleHud hud;
 
-    public bool IsPlayerUnit {
+    public bool IsPlayerUnit
+    {
         get { return isPlayerUnit; }
     }
 
-    public BattleHud Hud {
+    public BattleHud Hud
+    {
         get { return hud; }
     }
     public Pokemon Pokemon { get; set; }

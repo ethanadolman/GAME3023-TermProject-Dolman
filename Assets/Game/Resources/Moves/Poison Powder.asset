@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1adb425e52b98a34cacc765dc7b021b1, type: 3}
-  m_Name: Vine Whip
+  m_Name: Poison Powder
   m_EditorClassIdentifier: 
-  name: Vine Whip
+  name: Poison Powder
   description: 
-  type: 5
-  power: 45
+  type: 8
+  power: 0
   accuracy: 100
-  pp: 25
-  category: 0
+  pp: 20
+  category: 2
   effects:
     boosts: []
+    status: 1
   target: 0

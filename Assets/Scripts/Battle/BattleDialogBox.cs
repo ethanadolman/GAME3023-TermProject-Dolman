@@ -53,8 +53,8 @@ public class BattleDialogBox : MonoBehaviour
 
     public void EnableMoveSelector(bool enabled)
     {
-       moveSelector.SetActive(enabled);
-       moveDetails.SetActive(enabled);
+        moveSelector.SetActive(enabled);
+        moveDetails.SetActive(enabled);
     }
 
     public void UpdateActionSelection(int selectedAction)
