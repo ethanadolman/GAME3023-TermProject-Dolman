@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,11 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private AudioClip freeroamMusic;
     GameState state;
+
+    private void Awake()
+    {
+        ConditionsDB.Init();
+    }
 
     void Start()
     {

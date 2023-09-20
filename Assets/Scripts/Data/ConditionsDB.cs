@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class ConditionsDB
 {
+
+    public static void Init()
+    {
+        foreach (var kvp in Conditions)
+        {
+            var conditionId = kvp.Key;
+            var condition = kvp.Value;
+
+            condition.Id = conditionId;
+        }
+    }
     public static Dictionary<ConditionsID, Condition> Conditions { get; set; } = new Dictionary<ConditionsID, Condition>()
     {
         {
@@ -31,6 +42,103 @@ public class ConditionsDB
                     pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name} hurt itself due to burn");
                 }
             }
+        },
+        {
+            ConditionsID.par,
+            new Condition()
+            {
+                Name = "Paralyzed",
+                StartMessage = "has been paralyzed",
+                OnBeforeMove = (Pokemon pokemon) =>
+                {
+                    if (Random.Range(1, 5) == 1)
+                    {
+                        pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name}'s paralyzed and can't move");
+                        return false;
+                    }
+                    return true;
+                }
+            }
+        },
+        {
+            ConditionsID.frz,
+            new Condition()
+            {
+                Name = "Freeze",
+                StartMessage = "has been frozen",
+                OnBeforeMove = (Pokemon pokemon) =>
+                {
+                    if (Random.Range(1, 5) == 1)
+                    {
+                        pokemon.CureStatus();
+                        pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name}'s not frozen anymore");
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        },
+        {
+            ConditionsID.slp,
+            new Condition()
+            {
+                Name = "Sleep",
+                StartMessage = "has fallen asleep",
+                OnStart = (Pokemon pokemon) =>
+                {
+                    pokemon.StatusTime = Random.Range(1, 4);
+                    Debug.Log($"Will be asleep for {pokemon.StatusTime} moves");
+                },
+                OnBeforeMove = (Pokemon pokemon) =>
+                {
+                    if (pokemon.StatusTime <= 0)
+                    {
+                        pokemon.CureStatus();
+                        pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name} woke up!");
+                        return true;
+                    }
+
+                    pokemon.StatusTime--;
+                    pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name} is sleeping");
+                    return false;
+                }
+            }
+        },
+
+        //Volatile Status Conditions
+        {
+            ConditionsID.confusion,
+            new Condition()
+            {
+                Name = "Confusion",
+                StartMessage = "has been confused",
+                OnStart = (Pokemon pokemon) =>
+                {
+                    pokemon.VolatileStatusTime = Random.Range(1, 5);
+                    Debug.Log($"Will be confused for {pokemon.StatusTime} moves");
+                },
+                OnBeforeMove = (Pokemon pokemon) =>
+                {
+                    if (pokemon.VolatileStatusTime <= 0)
+                    {
+                        pokemon.CureVolatileStatus();
+                        pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name} kicked out of confusion!");
+                        return true;
+                    }
+
+                    pokemon.VolatileStatusTime--;
+
+                    //50% chance to do a move
+                    if (Random.Range(1, 3) == 1)
+                        return true;
+
+                    //Hurt by confusion
+                    pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name} is confused");
+                    pokemon.UpdateHP(pokemon.MaxHp/8);
+                    pokemon.StatusChanges.Enqueue($"It hurt itself due to confusion");
+                    return false;
+                }
+            }
         }
 
     };
@@ -40,5 +148,6 @@ public class ConditionsDB
 
 public enum ConditionsID
 {
-    none, psn, brn, slp, par, frz
+    none, psn, brn, slp, par, frz,
+    confusion
 }
