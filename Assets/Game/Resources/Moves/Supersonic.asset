@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1adb425e52b98a34cacc765dc7b021b1, type: 3}
   m_Name: Supersonic
   m_EditorClassIdentifier: 
-  name: Thunder Wave
+  name: Supersonic
   description: 
-  type: 11
+  type: 1
   power: 0
-  accuracy: 90
+  accuracy: 55
   pp: 20
   category: 2
   effects:
     boosts: []
-    status: 4
-    volatileStatus: 0
+    status: 0
+    volatileStatus: 6
   target: 0
