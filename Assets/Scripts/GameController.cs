@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public enum GameState { FreeRoam, Battle }
 
-public class GameController : MonoBehaviour
+public class GameController : NetworkBehaviour
 {
     [SerializeField] PlayerController playerController;
     [SerializeField] private BattleSystem battleSystem;
@@ -50,6 +51,8 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsOwner) return;
+
         if (state == GameState.FreeRoam)
         {
             playerController.HandleUpdate();
@@ -58,5 +61,6 @@ public class GameController : MonoBehaviour
         {
             battleSystem.HandleUpdate();
         }
+
     }
 }
