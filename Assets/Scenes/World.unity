@@ -1337,12 +1337,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pokemons:
+  - _base: {fileID: 11400000, guid: 95642987a30508f48b49bef1b6849c15, type: 2}
+    level: 3
   - _base: {fileID: 11400000, guid: c539890af1c4ab047bad529819af29d0, type: 2}
     level: 10
   - _base: {fileID: 11400000, guid: 1326bfd1acbca5f4b92282a777764e83, type: 2}
     level: 7
-  - _base: {fileID: 11400000, guid: 95642987a30508f48b49bef1b6849c15, type: 2}
-    level: 2
   - _base: {fileID: 11400000, guid: 678dd5a63401be847a767eb44c4e4284, type: 2}
     level: 5
   - _base: {fileID: 11400000, guid: 6fba9acecc7758f4f935fefcb5ddb0d2, type: 2}
@@ -37112,6 +37112,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2260679138654298750, guid: 545dc0dd41706d7428a72fe167d60235, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467262570678231508, guid: 545dc0dd41706d7428a72fe167d60235, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467262570678231508, guid: 545dc0dd41706d7428a72fe167d60235, type: 3}
+      propertyPath: m_FontData.m_RichText
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467262570678231508, guid: 545dc0dd41706d7428a72fe167d60235, type: 3}
+      propertyPath: m_FontData.m_AlignByGeometry
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -29,6 +30,7 @@ public class Pokemon
 
     public int HP { get; set; }
     public List<Move> Moves { get; set; }
+    public Move CurrentMove { get; set; }
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatBoosts { get; private set; }
     public Condition Status { get; private set; }
@@ -84,7 +86,9 @@ public class Pokemon
           {Stat.Defense, 0},
           {Stat.SpAttack, 0},
           {Stat.SpDefense, 0},
-          {Stat.Speed, 0}
+          {Stat.Speed, 0},
+          {Stat.Accuracy, 0},
+          {Stat.Evasion, 0}
       };
     }
     int GetStat(Stat stat)
@@ -209,7 +213,9 @@ public class Pokemon
     }
     public Move GetRandomMove()
     {
-        int r = Random.Range(0, Moves.Count);
+        var movesWithPP = Moves.Where(x => x.PP > 0).ToList();
+
+        int r = Random.Range(0, movesWithPP.Count);
         return Moves[r];
     }
 
