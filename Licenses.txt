@@ -5,6 +5,8 @@ Assets:
 
 CC0 1.0 Universal (CC0 1.0) 
 https://opengameart.org/content/zelda-like-tilesets-and-sprites
+https://opengameart.org/content/sunnyland-woods
+
 
 Attribution 3.0 Unported (CC BY 3.0)
 https://opengameart.org/content/lpc-lamp-posts-rework
@@ -21,4 +23,7 @@ NO LICENSE
 https://pixabay.com/sound-effects/wavering-text-scroll-f2-5-155-27605/
 https://pixabay.com/sound-effects/pokemon-cry-parody-46225/
 https://pixabay.com/sound-effects/winsquare-6993/
+https://www.youtube.com/watch?v=Se3hPb5FWTQ&list=LL&index=3&ab_channel=Yuzoboy
+https://pixabay.com/sound-effects/game-start-6104/
+https://pixabay.com/sound-effects/leaves-rustling-14633/
 

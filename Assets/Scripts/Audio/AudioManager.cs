@@ -9,7 +9,7 @@ public class AudioManager : MonoBehaviour
 
     public static AudioManager i { get; private set; }
 
-    void Awake()
+    void Start()
     {
         i = this;
     }
@@ -22,14 +22,16 @@ public class AudioManager : MonoBehaviour
         musicPlayer.Play();
     }
 
-    public void PlaySfx(AudioClip clip, bool loop = false)
+    public void PlaySfx(AudioClip clip, bool loop = false, float startPos = 0f)
     {
         if (clip == null) return;
+        if (startPos > clip.length) return;
 
         foreach (var channel in sfxPlayer)
         {
             if (!channel.isPlaying)
             {
+                channel.time = startPos;
                 channel.clip = clip;
                 channel.loop = loop;
                 channel.Play();
