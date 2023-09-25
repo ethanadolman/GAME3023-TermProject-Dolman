@@ -36,7 +36,7 @@ public class GameController : MonoBehaviour
         };
 
 
-        AudioManager.i.PlayMusic(freeroamMusic);
+        AudioManager.i.PlayMusic("Futaba");
     }
 
     void StartBattle()
@@ -57,7 +57,7 @@ public class GameController : MonoBehaviour
         state = GameState.FreeRoam;
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);
-        AudioManager.i.PlayMusic(freeroamMusic);
+        AudioManager.i.PlayMusic("Futaba");
     }
 
     // Update is called once per frame

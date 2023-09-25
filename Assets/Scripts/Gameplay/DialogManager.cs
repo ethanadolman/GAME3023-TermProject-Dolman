@@ -25,10 +25,13 @@ public class DialogManager : MonoBehaviour
     private Dialog dialog;
     private int currentLine = 0;
     private bool isTyping;
+
+    public bool IsShowingDialog { get; private set; }
     public IEnumerator ShowDialog(Dialog dialog)
     {
         yield return new WaitForEndOfFrame();
         OnShowDialog?.Invoke();
+        IsShowingDialog = true;
         this.dialog = dialog;
         dialogBox.SetActive(true);
         StartCoroutine(TypeDialog(dialog.Lines[0]));
@@ -45,8 +48,9 @@ public class DialogManager : MonoBehaviour
             }
             else
             {
-                AudioManager.i.ClearSfx();
+                AudioManager.i.StopClip("TextBeep");
                 currentLine = 0;
+                IsShowingDialog = false;
                 dialogBox.SetActive(false);
                 OnCloseDialog?.Invoke();
             }
@@ -55,7 +59,7 @@ public class DialogManager : MonoBehaviour
 
     public IEnumerator TypeDialog(string line)
     {
-        AudioManager.i.PlaySfx(textBeep, true, Random.Range(0, textBeep.length));
+        AudioManager.i.PlayClip("TextBeep", true, Random.Range(0, textBeep.length));
 
         isTyping = true;
         dialogText.text = "";
@@ -67,7 +71,6 @@ public class DialogManager : MonoBehaviour
             else
                 yield return new WaitForSeconds(0.5f / lettersPerSecond);
         }
-        AudioManager.i.ClearSfx();
         isTyping = false;
 
     }

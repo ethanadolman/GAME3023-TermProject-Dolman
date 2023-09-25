@@ -14,7 +14,7 @@ public class BackgroundScroll : MonoBehaviour
 
     private void Start()
     {
-        AudioManager.i.PlayMusic(titleTrack);
+        AudioManager.i.PlayClip("Title");
     }
 
     private void Update()

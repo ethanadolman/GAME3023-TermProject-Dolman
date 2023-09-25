@@ -55,12 +55,12 @@ public class BattleSystem : MonoBehaviour
         partyScreen.Init();
 
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
-        AudioManager.i.PlayMusic(wildBattleMusic);
+        AudioManager.i.PlayMusic("WildBattle");
         yield return StartCoroutine(dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared."));
-        AudioManager.i.PlaySfx(pokemonCrySfx);
+        AudioManager.i.PlayClip("PokemonCry");
         if (playerUnit.Pokemon.HP <= playerUnit.Pokemon.MaxHp * 0.10f)
         {
-            AudioManager.i.PlaySfx(pokemonLowHealth, true);
+            AudioManager.i.PlayClip("PokemonLowHealth", true);
         }
         fleeAttempts = 0;
         ActionSelection();
@@ -150,26 +150,26 @@ public class BattleSystem : MonoBehaviour
         
     }
 
-    IEnumerator PerformPlayerFlee()
-    {
-        state = BattleState.Busy;
-        fleeAttempts++;
-        int escapeOdds = ((playerUnit.Pokemon.Speed * 128) / enemyUnit.Pokemon.Speed) + (30 * fleeAttempts);
-        if (escapeOdds > Random.Range(0, 256))
-        {
-            AudioManager.i.PlaySfx(pokemonFlee);
-            yield return dialogBox.TypeDialog($"you got away!");
-            yield return new WaitForSeconds(0.25f);
-            AudioManager.i.ClearSfx();
-            BattleOver(false);
-        }
-        else
-        {
-            yield return dialogBox.TypeDialog($"you couldn't get away!");
-            //StartCoroutine(EnemyMove());
-        }
+    //IEnumerator PerformPlayerFlee()
+    //{
+    //    state = BattleState.Busy;
+    //    fleeAttempts++;
+    //    int escapeOdds = ((playerUnit.Pokemon.Speed * 128) / enemyUnit.Pokemon.Speed) + (30 * fleeAttempts);
+    //    if (escapeOdds > Random.Range(0, 256))
+    //    {
+    //        AudioManager.i.PlayClip("PokemonFlee");
+    //        yield return dialogBox.TypeDialog($"you got away!");
+    //        yield return new WaitForSeconds(0.25f);
+    //        AudioManager.i.StopMusic();
+    //        BattleOver(false);
+    //    }
+    //    else
+    //    {
+    //        yield return dialogBox.TypeDialog($"you couldn't get away!");
+    //        //StartCoroutine(EnemyMove());
+    //    }
 
-    }
+    //}
 
 
     void BattleOver(bool won)
@@ -227,7 +227,7 @@ public class BattleSystem : MonoBehaviour
             {
 
                 yield return dialogBox.TypeDialog($"{targetUnit.Pokemon.Base.Name} Fainted");
-                AudioManager.i.PlaySfx(pokemonFaint);
+                AudioManager.i.PlayClip("PokemonFaint");
                 targetUnit.PlayFaintAnimation();
                 yield return new WaitForSeconds(1f);
 
@@ -244,8 +244,8 @@ public class BattleSystem : MonoBehaviour
 
         if (playerUnit.Pokemon.HP <= playerUnit.Pokemon.MaxHp * 0.10f && playerUnit.Pokemon.HP > 0)
         {
-            AudioManager.i.ClearSfx();
-            AudioManager.i.PlaySfx(pokemonLowHealth, true);
+            AudioManager.i.StopClip("PokemonLowHealth");
+            AudioManager.i.PlayClip("PokemonLowHealth", true);
         }
     }
 
@@ -258,12 +258,12 @@ public class BattleSystem : MonoBehaviour
             if (moveTarget == MoveTarget.Self)
             {
                 source.ApplyBoosts(effects.Boosts);
-                AudioManager.i.PlaySfx(statUp);
+                AudioManager.i.PlayClip("StatUp");
             }
             else
             {
                 target.ApplyBoosts(effects.Boosts);
-                AudioManager.i.PlaySfx(statDown);
+                AudioManager.i.PlayClip("StatDown");
             }
         }
 
@@ -297,7 +297,7 @@ public class BattleSystem : MonoBehaviour
         {
 
             yield return dialogBox.TypeDialog($"{sourceUnit.Pokemon.Base.Name} Fainted");
-            AudioManager.i.PlaySfx(pokemonFaint);
+            AudioManager.i.PlayClip("PokemonFaint");
             sourceUnit.PlayFaintAnimation();
             yield return new WaitForSeconds(1f);
 
@@ -350,7 +350,7 @@ public class BattleSystem : MonoBehaviour
         }
         else
         {
-            AudioManager.i.PlayMusic(battleVictoryMusic, false);
+            AudioManager.i.PlayMusic("BattleVictory", false);
             BattleOver(true);
         }
     }
@@ -362,17 +362,17 @@ public class BattleSystem : MonoBehaviour
 
         if (damageDetails.TypeEffectiveness > 1f)
         {
-            AudioManager.i.PlaySfx(hitSuperEffective);
+            AudioManager.i.PlayClip("HitSuperEffective");
             yield return dialogBox.TypeDialog($"It's super effective!");
         }
         else if (damageDetails.TypeEffectiveness < 1f)
         {
-            AudioManager.i.PlaySfx(hitWeak);
+            AudioManager.i.PlayClip("HitWeak");
             yield return dialogBox.TypeDialog($"It's not very effective!");
         }
         else
         {
-            AudioManager.i.PlaySfx(hitNormal);
+            AudioManager.i.PlayClip("HitNormal");
             yield return null;
         }
     }
@@ -521,9 +521,9 @@ public class BattleSystem : MonoBehaviour
         if (playerUnit.Pokemon.HP > 0)
         {
             
-            AudioManager.i.ClearSfx();
             yield return dialogBox.TypeDialog($"Come back {playerUnit.Pokemon.Base.Name}");
-            AudioManager.i.PlaySfx(pokemonFaint);
+            AudioManager.i.StopClip("PokemonLowHealth");
+            AudioManager.i.PlayClip("PokemonFaint");
             playerUnit.PlayFaintAnimation();
             yield return new WaitForSeconds(2f);
         }
@@ -532,11 +532,11 @@ public class BattleSystem : MonoBehaviour
         dialogBox.SetMoveNames(newPokemon.Moves);
         yield return dialogBox.TypeDialog($"Go {newPokemon.Base.Name}!");
         if (playerUnit.Pokemon.HP <= playerUnit.Pokemon.MaxHp * 0.10f)
-            AudioManager.i.PlaySfx(pokemonLowHealth, true);
+            AudioManager.i.PlayClip("PokemonLowHealth", true);
         else
-            AudioManager.i.ClearSfx();
+            AudioManager.i.StopClip("PokemonLowHealth");
 
-        AudioManager.i.PlaySfx(pokemonCrySfx);
+        AudioManager.i.PlayClip("PokemonCry");
         yield return new WaitForSeconds(1f);
 
         state = BattleState.RunningTurn;

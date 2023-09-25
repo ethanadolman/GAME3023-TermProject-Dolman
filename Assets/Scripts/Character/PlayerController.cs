@@ -6,29 +6,24 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed; // The speed at which the player moves.
-    public LayerMask SolidObjectsLayer;
-    public LayerMask InteractableLayer;
-    public LayerMask EncountersLayer;
+   
     [SerializeField] private AudioClip tallGrass;
 
     public event Action OnEncountered;
 
-    public bool isMoving; // Indicates whether the player is currently in motion.
-
     private Vector2 input; // Stores input from the player for movement direction (x and y).
 
-    private Animator animator;
+    private Character character;
 
     void Awake()
     {
-        animator = GetComponent<Animator>();
+        character = GetComponent<Character>();
     }
 
     // Update is called once per frame
     public void HandleUpdate()
     {
-        if (!isMoving)
+        if (!character.IsMoving)
         {
             // Get input from the player for horizontal and vertical movement.
             input.x = Input.GetAxisRaw("Horizontal");
@@ -39,19 +34,15 @@ public class PlayerController : MonoBehaviour
 
             if (input != Vector2.zero)
             {
-                animator.SetFloat("moveX", input.x);
-                animator.SetFloat("moveY", input.y);
-                // Calculate the target position based on current position and input.
-                var targetPos = transform.position;
-                targetPos.x += input.x;
-                targetPos.y += input.y;
-
-                //If the tile is walkable, start the movement coroutine to move the player to the target position.
-                if (IsWalkable(targetPos))
-                    StartCoroutine(Move(targetPos));
+                if (Physics2D.OverlapCircle(transform.position, 0.15f, GameLayers.i.EncountersLayer) != null && character.Animator.IsMoving == false)
+                {
+                    AudioManager.i.PlayClip("TallGrass", true, Random.Range(0, tallGrass.length));
+                }
+                StartCoroutine(character.Move(input, CheckForEncounters));
             }
         }
-        animator.SetBool("isMoving", isMoving);
+
+        character.HandleUpdate();
 
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
             Interact();
@@ -60,58 +51,26 @@ public class PlayerController : MonoBehaviour
 
     void Interact()
     {
-        var facingDir = new Vector3(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
+        var facingDir = new Vector3(character.Animator.MoveX, character.Animator.MoveY);
         var interactPos = transform.position + facingDir;
 
         //Debug.DrawLine(transform.position, interactPos, Color.green, 0.5f);
-       var collider = Physics2D.OverlapCircle(interactPos, 0.15f, InteractableLayer);
+       var collider = Physics2D.OverlapCircle(interactPos, 0.15f, GameLayers.i.InteractableLayer);
        if (collider != null)
        {
            collider.GetComponent<Interactable>()?.Interact();
        }
     }
 
-    // Coroutine for smoothly moving the player to a target position.
-    IEnumerator Move(Vector3 targetPos)
-    {
-        if (Physics2D.OverlapCircle(targetPos, 0.15f, EncountersLayer) != null && isMoving == false)
-        {
-            AudioManager.i.PlaySfx(tallGrass, true, Random.Range(0, tallGrass.length));
-        }
-        isMoving = true; // Set the isMoving flag to true to prevent further input.
-        
-        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon)
-        {
-            // Move the player's position closer to the target position over time.
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-            yield return null; // Wait for the next frame before continuing the loop.
-        }
-
-        AudioManager.i.ClearSfx();
-        // Ensure the player reaches the exact target position and set isMoving back to false.
-        transform.position = targetPos;
-        isMoving = false; // The player is no longer moving.
-
-        CheckForEncounters();
-    }
-
-    private bool IsWalkable(Vector3 targetPos)
-    {
-        if (Physics2D.OverlapCircle(targetPos, 0.15f, SolidObjectsLayer | InteractableLayer) != null)
-        {
-            return false;
-        }
-        return true;
-    }
-
     private void CheckForEncounters()
     {
-        if (Physics2D.OverlapCircle(transform.position, 0.15f, EncountersLayer) != null)
+        AudioManager.i.StopClip("TallGrass");
+        if (Physics2D.OverlapCircle(transform.position, 0.15f, GameLayers.i.EncountersLayer) != null)
         {
             
             if (UnityEngine.Random.Range(1, 101) <= 10)
             {
-                animator.SetBool("isMoving", isMoving);
+                character.Animator.IsMoving = false;
                 OnEncountered();
             };
 

@@ -14,7 +14,7 @@ public class SceneController : MonoBehaviour
 
     public void LoadScene(string name)
     {
-        AudioManager.i.PlaySfx(optionSelected);
+        AudioManager.i.PlayClip("OptionSelected");
         StartCoroutine(SceneLoader(name));
     }
 
@@ -22,7 +22,7 @@ public class SceneController : MonoBehaviour
     {
         
         yield return new WaitForSeconds(1f);
-        AudioManager.i.ClearSfx();
+        AudioManager.i.StopAllClips();
         SceneManager.LoadScene(name);
     }
 }
