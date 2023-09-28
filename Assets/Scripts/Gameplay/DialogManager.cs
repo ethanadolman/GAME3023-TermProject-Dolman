@@ -71,6 +71,7 @@ public class DialogManager : MonoBehaviour
             else
                 yield return new WaitForSeconds(0.5f / lettersPerSecond);
         }
+        AudioManager.i.StopClip("TextBeep");
         isTyping = false;
 
     }
