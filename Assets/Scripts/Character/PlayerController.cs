@@ -6,11 +6,12 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
-   
     [SerializeField] private AudioClip tallGrass;
 
-    public event Action OnEncountered;
+    [SerializeField] private string name;
+    [SerializeField] private Sprite sprite;
 
+    public event Action OnEncountered;
     public event Action<Collider2D> OnEnterTrainersView;
 
     private Vector2 input; // Stores input from the player for movement direction (x and y).
@@ -94,6 +95,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public string Name { get => name; }
+    public Sprite Sprite { get => sprite; }
     private void OnDestroy()
     {
         SaveData.i.SaveGame(character.transform.position);

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class TrainerController : MonoBehaviour
 {
+    [SerializeField] private string name;
+    [SerializeField] private Sprite sprite;
     [SerializeField] private Dialog dialog;
     [SerializeField] private GameObject exclamation;
     [SerializeField] private GameObject fov;
@@ -32,7 +34,7 @@ public class TrainerController : MonoBehaviour
         exclamation.SetActive(true);
         AudioManager.i.PlayClip("TrainerExclamation");
         yield return new WaitForSeconds(0.5f);
-        AudioManager.i.PlayMusic("TrainerEncounter");
+        AudioManager.i.PlayMusic("TrainerEncounter", false);
         exclamation.SetActive(false);
 
         //Walk towards the player
@@ -44,7 +46,7 @@ public class TrainerController : MonoBehaviour
 
        //Show dialog
        StartCoroutine(DialogManager.Instance.ShowDialog(dialog, () => {
-           Debug.Log("Start Trainer Battle");
+          GameController.Instance.StartTrainerBattle(this);
        }));
     }
 
@@ -60,4 +62,7 @@ public class TrainerController : MonoBehaviour
 
         fov.transform.eulerAngles = new Vector3(0f, 0f, angle);
     }
+
+    public string Name { get => name; }
+    public Sprite Sprite { get => sprite; }
 }

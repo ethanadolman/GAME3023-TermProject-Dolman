@@ -1136,7 +1136,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: bba9b561e4f889f4faff09c62eebf2f2, type: 3}
   - name: StatDown
     clip: {fileID: 8300000, guid: ac3994970935f1a40a319201f85dff16, type: 3}
-  - name: BattleVictory
+  - name: WildBattleVictory
     clip: {fileID: 8300000, guid: 9d0df58611715e14d9f07521d4c8a9e2, type: 3}
   - name: HitSuperEffective
     clip: {fileID: 8300000, guid: f3effe5905983724d80a4bf3d3918d17, type: 3}
@@ -1150,6 +1150,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: bd2bd6fc734465e4ab397c5bcf67ae11, type: 3}
   - name: TrainerEncounter
     clip: {fileID: 8300000, guid: 8e5a3e23a877986478c3c2f18dbc281f, type: 3}
+  - name: TrainerBattle
+    clip: {fileID: 8300000, guid: 362c10cee75440543a00028c2d0ed43f, type: 3}
+  - name: TrainerBattleVictory
+    clip: {fileID: 8300000, guid: 71971e8a203b07248bb1ef186cd4b813, type: 3}
 --- !u!114 &1378883475
 MonoBehaviour:
   m_ObjectHideFlags: 0

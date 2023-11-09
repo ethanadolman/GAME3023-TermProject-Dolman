@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
@@ -14,19 +15,10 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] private BattleUnit enemyUnit;
     [SerializeField] private BattleDialogBox dialogBox;
     [SerializeField] private PartyScreen partyScreen;
+    [SerializeField] private Image playerImage;
+    [SerializeField] private Image trainerImage;
 
-    [SerializeField] private AudioClip wildBattleMusic;
-    [SerializeField] private AudioClip battleVictoryMusic;
-
-    [SerializeField] private AudioClip pokemonCrySfx;
-    [SerializeField] private AudioClip hitWeak;
-    [SerializeField] private AudioClip hitNormal;
-    [SerializeField] private AudioClip hitSuperEffective;
-    [SerializeField] private AudioClip pokemonLowHealth;
-    [SerializeField] private AudioClip pokemonFaint;
-    [SerializeField] private AudioClip pokemonFlee;
-    [SerializeField] private AudioClip statDown;
-    [SerializeField] private AudioClip statUp;
+    
 
     public event Action<bool> OnBattleOver;
 
@@ -38,7 +30,12 @@ public class BattleSystem : MonoBehaviour
     private int fleeAttempts;
 
     private PokemonParty playerParty;
+    private PokemonParty trainerParty;
     private Pokemon wildPokemon;
+
+    private bool isTrainerBattle = false;
+    private PlayerController player;
+    private TrainerController trainer;
 
     public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
     {
@@ -46,23 +43,73 @@ public class BattleSystem : MonoBehaviour
         this.wildPokemon = wildPokemon;
         StartCoroutine(SetupBattle());
     }
+public void StartTrainerBattle(PokemonParty playerParty, PokemonParty trainerParty)
+    {
+        this.playerParty = playerParty;
+        this.trainerParty = trainerParty;
+
+        isTrainerBattle = true;
+        player = playerParty.GetComponent<PlayerController>();
+        trainer = trainerParty.GetComponent<TrainerController>();
+
+        StartCoroutine(SetupBattle());
+    }
 
     public IEnumerator SetupBattle()
     {
-        playerUnit.SetUp(playerParty.GetHealthyPokemon());
-        enemyUnit.SetUp(wildPokemon);
+        playerUnit.Clear();
+        enemyUnit.Clear();
 
-        partyScreen.Init();
 
-        dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
-        AudioManager.i.PlayMusic("WildBattle");
-        yield return StartCoroutine(dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared."));
-        AudioManager.i.PlayClip("PokemonCry");
-        if (playerUnit.Pokemon.HP <= playerUnit.Pokemon.MaxHp * 0.10f)
+        if (!isTrainerBattle)
         {
-            AudioManager.i.PlayClip("PokemonLowHealth", true);
+            // Wild Pokemon Battle
+            playerUnit.SetUp(playerParty.GetHealthyPokemon());
+            enemyUnit.SetUp(wildPokemon);
+
+            dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
+            AudioManager.i.PlayMusic("WildBattle");
+            yield return dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared.");
+            AudioManager.i.PlayClip("PokemonCry");
+
         }
-        fleeAttempts = 0;
+        else
+        {
+            // Trainer Battle
+
+            // show trainer and player sprites
+            playerUnit.gameObject.SetActive(false);
+            enemyUnit.gameObject.SetActive(false);
+
+            playerImage.gameObject.SetActive(true);
+            trainerImage.gameObject.SetActive(true);
+            playerImage.sprite = player.Sprite;
+            trainerImage.sprite = trainer.Sprite;
+
+            AudioManager.i.PlayMusic("TrainerBattle");
+            yield return dialogBox.TypeDialog($"{trainer.Name} wants to battle.");
+
+            // Send out first pokemon of the trainer
+            trainerImage.gameObject.SetActive(false);
+            enemyUnit.gameObject.SetActive(true);
+            var enemyPokemon = trainerParty.GetHealthyPokemon();
+            enemyUnit.SetUp(enemyPokemon);
+            yield return dialogBox.TypeDialog($"{trainer.Name} sent out {enemyPokemon.Base.Name}");
+            AudioManager.i.PlayClip("PokemonCry");
+
+
+            // Send out first pokemon of the player
+            playerImage.gameObject.SetActive(false);
+            playerUnit.gameObject.SetActive(true);
+            var playerPokemon = playerParty.GetHealthyPokemon();
+            playerUnit.SetUp(playerPokemon);
+            yield return dialogBox.TypeDialog($"Go {playerPokemon.Base.Name}!");
+            dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
+        }
+
+        if (playerUnit.Pokemon.HP <= playerUnit.Pokemon.MaxHp * 0.10f)
+            AudioManager.i.PlayClip("PokemonLowHealth", true);
+        partyScreen.Init();
         ActionSelection();
     }
 
@@ -350,8 +397,22 @@ public class BattleSystem : MonoBehaviour
         }
         else
         {
-            AudioManager.i.PlayMusic("BattleVictory", false);
-            BattleOver(true);
+            if (!isTrainerBattle)
+            {
+                AudioManager.i.PlayMusic("WildBattleVictory", false);
+                BattleOver(true);
+            }
+            else
+            {
+                var nextPokemon = trainerParty.GetHealthyPokemon();
+                if (nextPokemon != null)
+                    StartCoroutine(SendNextTrainerPokemon(nextPokemon));
+                else
+                {
+                    AudioManager.i.PlayMusic("TrainerBattleVictory", false);
+                    BattleOver(true);
+                }
+            }
         }
     }
 
@@ -538,6 +599,16 @@ public class BattleSystem : MonoBehaviour
 
         AudioManager.i.PlayClip("PokemonCry");
         yield return new WaitForSeconds(1f);
+
+        state = BattleState.RunningTurn;
+    }
+
+    IEnumerator SendNextTrainerPokemon(Pokemon nextPokemon)
+    {
+        state = BattleState.Busy;
+
+        enemyUnit.SetUp(nextPokemon);
+        yield return dialogBox.TypeDialog($"{trainer.Name} sent out {nextPokemon.Base.Name}!");
 
         state = BattleState.RunningTurn;
     }
