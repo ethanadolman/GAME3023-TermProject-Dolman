@@ -1146,6 +1146,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 773c50f5093900d4e87e26d5f8861716, type: 3}
   - name: OptionSelected
     clip: {fileID: 8300000, guid: 8cb89643df2c9bb45ae28632cf785cb1, type: 3}
+  - name: TrainerExclamation
+    clip: {fileID: 8300000, guid: bd2bd6fc734465e4ab397c5bcf67ae11, type: 3}
+  - name: TrainerEncounter
+    clip: {fileID: 8300000, guid: 8e5a3e23a877986478c3c2f18dbc281f, type: 3}
 --- !u!114 &1378883475
 MonoBehaviour:
   m_ObjectHideFlags: 0

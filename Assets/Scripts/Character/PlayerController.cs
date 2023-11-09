@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
 
     public event Action OnEncountered;
 
+    public event Action<Collider2D> OnEnterTrainersView;
+
     private Vector2 input; // Stores input from the player for movement direction (x and y).
 
     private Character character;
@@ -38,7 +40,7 @@ public class PlayerController : MonoBehaviour
                 {
                     AudioManager.i.PlayClip("TallGrass", true, Random.Range(0, tallGrass.length));
                 }
-                StartCoroutine(character.Move(input, CheckForEncounters));
+                StartCoroutine(character.Move(input, OnMoveOver));
             }
         }
 
@@ -62,6 +64,11 @@ public class PlayerController : MonoBehaviour
        }
     }
 
+    private void OnMoveOver()
+    {
+        CheckForEncounters();
+        CheckIfInTrainersView();
+    }
     private void CheckForEncounters()
     {
         AudioManager.i.StopClip("TallGrass");
@@ -74,6 +81,16 @@ public class PlayerController : MonoBehaviour
                 OnEncountered();
             };
 
+        }
+    }
+
+    private void CheckIfInTrainersView()
+    {
+        var collider = Physics2D.OverlapCircle(transform.position, 0.15f, GameLayers.i.FovLayer);
+        if (collider != null)
+        {
+            character.Animator.IsMoving = false;
+            OnEnterTrainersView?.Invoke(collider);
         }
     }
 
