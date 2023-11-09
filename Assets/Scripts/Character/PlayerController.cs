@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
        var collider = Physics2D.OverlapCircle(interactPos, 0.15f, GameLayers.i.InteractableLayer);
        if (collider != null)
        {
-           collider.GetComponent<Interactable>()?.Interact();
+           collider.GetComponent<Interactable>()?.Interact(transform);
        }
     }
 
@@ -75,5 +75,10 @@ public class PlayerController : MonoBehaviour
             };
 
         }
+    }
+
+    private void OnDestroy()
+    {
+        SaveData.i.SaveGame(character.transform.position);
     }
 }
