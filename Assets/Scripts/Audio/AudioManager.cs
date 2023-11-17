@@ -48,8 +48,24 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    
 
+    public void PlayClip(string clip)
+    {
+
+        if (AudioDatabase[clip] == null) return;
+
+        foreach (var channel in clipPlayer)
+        {
+            if (!channel.isPlaying)
+            {
+                channel.time = 0f;
+                channel.clip = AudioDatabase[clip];
+                channel.loop = false;
+                channel.Play();
+                break;
+            }
+        }
+    }
     public void PlayClip(string clip, bool loop = false, float startPos = 0f)
     {
         
